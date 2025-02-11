@@ -2,23 +2,36 @@ import sqlite3
 from sqlite3 import Error
 import pandas as pd
 import numpy as np
-from pandastable import Table
+from CTkTable import *
 import customtkinter
+import tkinter
 from pathlib import Path
+
+customtkinter.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
+customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
 class App(customtkinter.CTk):
     """
     Description: Main App Window Class
     """
-    def __init__(self):
-        super().__init__()
-        df = load_df_objects(1)
+    width = 900
+    height = 600
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.title(f"Collectio version {APP_VERSION}")
-        self.geometry("1800x800")
+        self.geometry(f"{self.width}x{self.height}")
         self.resizable(False,False)
         self.iconbitmap(APP_ICO)
-        #self.table = Table(self.frame, dataframe=df,showtoolbar=False,showstatusbar=True)
-        #self.table.show()
+
+        # create main frame
+        self.main_frame = customtkinter.CTkFrame(self, corner_radius=0)
+        self.main_frame.grid_columnconfigure(0, weight=1)
+        self.back_button = customtkinter.CTkButton(self.main_frame, text="Prout", command=self.prout_event, width=80)
+        self.back_button.grid(row=0, column=0, padx=30, pady=(15, 15))
+
+    def prout_event(self):
+        print(f"> {CGREEN}bouton prout pressé{CEND}")
 
 def init_db():
     """
@@ -181,6 +194,13 @@ def load_df_objects(category: int):
         if conn:
             conn.close()    
         return df
+
+def filter_platform(category: int, manufacturer: str, platform: str):
+    df = load_df_objects(category)
+    df = df[['manufacturer','platform','title','support','status']]
+    df = df.loc[(df['manufacturer']== manufacturer)and(df['platform']== platform)]
+    return df.head(5).values.tolist()
+
 
 if __name__ == "__main__":
     """
