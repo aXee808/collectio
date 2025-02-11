@@ -1,6 +1,7 @@
 import sqlite3
 from sqlite3 import Error
 import pandas as pd
+import os
 import numpy as np
 from CTkTable import *
 import customtkinter
@@ -39,6 +40,8 @@ def init_db():
     """
     conn = None
     try:
+        if not os.path.exists( APP_DATA_DB_DIR):
+            os.makedirs(APP_DATA_DB_DIR)
         with open(APP_INIT_SQL,'r') as sql_file:
             sql = sql_file.read()
         conn = sqlite3.connect(APP_DATABASE)
@@ -208,6 +211,7 @@ if __name__ == "__main__":
     """
     APP_PATH=Path(__file__).parent
     APP_VERSION="alpha 0.1"
+    APP_DATA_DB_DIR=APP_PATH / "data/db"
     APP_DATABASE=APP_PATH / "data/db/data.db"
     APP_INIT_SQL=APP_PATH / "data/sql/init_db.sql"
     APP_ICO=APP_PATH / "data/assets/collectio.ico"
